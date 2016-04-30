@@ -38,6 +38,8 @@
 		462E89651CD4B4FB0068D7F8 /* iTunesArtwork.png in Resources */ = {isa = PBXBuildFile; fileRef = 462E89621CD4B4FB0068D7F8 /* iTunesArtwork.png */; };
 		462E89661CD4B4FB0068D7F8 /* iTunesArtwork@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 462E89631CD4B4FB0068D7F8 /* iTunesArtwork@2x.png */; };
 		462E89671CD4B4FB0068D7F8 /* iTunesArtwork@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 462E89641CD4B4FB0068D7F8 /* iTunesArtwork@3x.png */; };
+		462E896A1CD4B8B80068D7F8 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 462E89691CD4B8B80068D7F8 /* Settings.bundle */; };
+		462E896C1CD4D8180068D7F8 /* Icon-83.5@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 462E896B1CD4D8180068D7F8 /* Icon-83.5@2x.png */; };
 		46340FAD1CC5AA4900986ACE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46340FAC1CC5AA4900986ACE /* AppDelegate.swift */; };
 		46340FB11CC5AA4900986ACE /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46340FB01CC5AA4900986ACE /* Color.swift */; };
 		46340FB31CC5AA4900986ACE /* EventSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46340FB21CC5AA4900986ACE /* EventSource.swift */; };
@@ -159,6 +161,8 @@
 		462E89621CD4B4FB0068D7F8 /* iTunesArtwork.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iTunesArtwork.png; sourceTree = "<group>"; };
 		462E89631CD4B4FB0068D7F8 /* iTunesArtwork@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iTunesArtwork@2x.png"; sourceTree = "<group>"; };
 		462E89641CD4B4FB0068D7F8 /* iTunesArtwork@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iTunesArtwork@3x.png"; sourceTree = "<group>"; };
+		462E89691CD4B8B80068D7F8 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
+		462E896B1CD4D8180068D7F8 /* Icon-83.5@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-83.5@2x.png"; sourceTree = "<group>"; };
 		46340FA91CC5AA4900986ACE /* LightDJPlayer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LightDJPlayer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		46340FAC1CC5AA4900986ACE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		46340FB01CC5AA4900986ACE /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
@@ -280,6 +284,7 @@
 				462E89391CD4B4F20068D7F8 /* Icon-76.png */,
 				462E893A1CD4B4F20068D7F8 /* Icon-76@2x.png */,
 				462E893B1CD4B4F20068D7F8 /* Icon-76@3x.png */,
+				462E896B1CD4D8180068D7F8 /* Icon-83.5@2x.png */,
 				462E893C1CD4B4F20068D7F8 /* Icon-86@2x.png */,
 				462E893D1CD4B4F20068D7F8 /* Icon-96@2x.png */,
 				462E893E1CD4B4F20068D7F8 /* Icon-Small-50.png */,
@@ -319,6 +324,7 @@
 		46340FAB1CC5AA4900986ACE /* LightDJ */ = {
 			isa = PBXGroup;
 			children = (
+				462E89691CD4B8B80068D7F8 /* Settings.bundle */,
 				462E89681CD4B5020068D7F8 /* Resources */,
 				46340FAC1CC5AA4900986ACE /* AppDelegate.swift */,
 				463410411CC5AA4900986ACE /* WorkSpace.swift */,
@@ -544,6 +550,7 @@
 				462E89481CD4B4F20068D7F8 /* Icon-27.5@2x.png in Resources */,
 				4634102B1CC5AA4900986ACE /* haloGray.mp4 in Resources */,
 				462E894E1CD4B4F20068D7F8 /* Icon-60.png in Resources */,
+				462E896C1CD4D8180068D7F8 /* Icon-83.5@2x.png in Resources */,
 				462E892A1CD4B3370068D7F8 /* lightdjlogo.png in Resources */,
 				462E895E1CD4B4F20068D7F8 /* Icon-Small@3x.png in Resources */,
 				462E89611CD4B4F20068D7F8 /* Icon@3x.png in Resources */,
@@ -553,6 +560,7 @@
 				462E89561CD4B4F20068D7F8 /* Icon-76@3x.png in Resources */,
 				462E89601CD4B4F20068D7F8 /* Icon@2x.png in Resources */,
 				462E894A1CD4B4F20068D7F8 /* Icon-29@3x.png in Resources */,
+				462E896A1CD4B8B80068D7F8 /* Settings.bundle in Resources */,
 				462E894B1CD4B4F20068D7F8 /* Icon-40.png in Resources */,
 				462E895B1CD4B4F20068D7F8 /* Icon-Small-50@3x.png in Resources */,
 				462E89511CD4B4F20068D7F8 /* Icon-72.png in Resources */,
@@ -788,7 +796,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = LightDJ/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.dev.touyou.LightDJ;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dev.touyou.LightPlayer;
 				PRODUCT_NAME = "$(TARGET_NAME)Player";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -801,7 +809,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = LightDJ/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.dev.touyou.LightDJ;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dev.touyou.LightPlayer;
 				PRODUCT_NAME = "$(TARGET_NAME)Player";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
