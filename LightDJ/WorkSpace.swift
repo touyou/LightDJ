@@ -22,15 +22,18 @@ private func AudioQueueInputCallback(
 
 class WorkSpace: CanvasController, MPMediaPickerControllerDelegate {
     
-    let modeCnt = 2
+    var modeCnt = 5
     
     var queue: AudioQueueRef!
     var timer: NSTimer!
     var colorWeight: [Double] = [0.0, 0.0, 0.0]
     var circle: Circle?
     var square: Rectangle?
+    var star: Star?
+    var regularPol: RegularPolygon?
     var mediaItems = [MPMediaItem]()
     var mediaPlayer: AudioPlayer?
+    var nowPlaying: Int = 0
     
     override func setup() {
         prepareInput()
@@ -84,16 +87,18 @@ class WorkSpace: CanvasController, MPMediaPickerControllerDelegate {
         // 音楽を選ぶ
         let picker = MPMediaPickerController()
         picker.delegate = self
-        picker.allowsPickingMultipleItems = false
+        picker.allowsPickingMultipleItems = true
         presentViewController(picker, animated: true, completion: nil)
         // ピンチで曲変更
         canvas.addPinchGestureRecognizer {_,_,_ in
             if self.mediaPlayer != nil {
                 self.mediaPlayer?.pause()
             }
+            self.mediaPlayer = nil
+            self.mediaItems = []
             let picker = MPMediaPickerController()
             picker.delegate = self
-            picker.allowsPickingMultipleItems = false
+            picker.allowsPickingMultipleItems = true
             self.presentViewController(picker, animated: true, completion: nil)
         }
     }
@@ -108,15 +113,29 @@ class WorkSpace: CanvasController, MPMediaPickerControllerDelegate {
             return
         }
         let item = mediaItems[0]
-        if let url = item.assetURL {
-            mediaPlayer = AudioPlayer(url: url)
-            mediaPlayer?.loops = true
-            mediaPlayer?.play()
-        }
+        nowPlaying = 0
+        playMedia(item)
     }
     func mediaPickerDidCancel(mediaPicker: MPMediaPickerController) {
         mediaPlayer = nil
         dismissViewControllerAnimated(true, completion: nil)
+    }
+    func playMedia(mediaItem: MPMediaItem) {
+        if let url = mediaItem.assetURL {
+            mediaPlayer = AudioPlayer(url: url)
+            mediaPlayer?.loops = false
+            mediaPlayer?.play()
+        }
+    }
+    func playNext() {
+        if !mediaPlayer!.playing {
+            nowPlaying += 1
+            if nowPlaying < mediaItems.count {
+                playMedia(mediaItems[nowPlaying])
+            } else {
+                mediaPlayer = nil
+            }
+        }
     }
     
     // MARK: - Input
@@ -153,21 +172,60 @@ class WorkSpace: CanvasController, MPMediaPickerControllerDelegate {
         
         // modeごとにselectorを変更する
         switch mode {
-        case 0:
+        case 1:
             self.timer = NSTimer.scheduledTimerWithTimeInterval(0.1,
                                                                 target: self,
                                                                 selector: #selector(WorkSpace.circleMode),
                                                                 userInfo: nil,
                                                                 repeats: true)
-        case 1:
+        case 2:
             self.timer = NSTimer.scheduledTimerWithTimeInterval(0.1,
                                                                 target: self,
                                                                 selector: #selector(WorkSpace.squareMode),
                                                                 userInfo: nil,
                                                                 repeats: true)
+        case 3:
+            self.timer = NSTimer.scheduledTimerWithTimeInterval(0.1,
+                                                                target: self,
+                                                                selector: #selector(WorkSpace.starMode),
+                                                                userInfo: nil,
+                                                                repeats: true)
+        case 4:
+            self.timer = NSTimer.scheduledTimerWithTimeInterval(0.1,
+                                                                target: self,
+                                                                selector: #selector(WorkSpace.regMode),
+                                                                userInfo: nil,
+                                                                repeats: true)
+        case 0:
+            self.timer = NSTimer.scheduledTimerWithTimeInterval(0.1,
+                                                                target: self,
+                                                                selector: #selector(WorkSpace.noObject),
+                                                                userInfo: nil,
+                                                                repeats: true)
         default: break
         }
         timer.fire()
+    }
+    
+    func noObject() {
+        var level = 0.0
+        if mediaPlayer == nil {
+            var levelMeter = AudioQueueLevelMeterState()
+            var propertySize = UInt32(sizeof(AudioQueueLevelMeterState))
+            AudioQueueGetProperty(
+                self.queue,
+                kAudioQueueProperty_CurrentLevelMeterDB,
+                &levelMeter,
+                &propertySize)
+            level = Double(levelMeter.mAveragePower)
+        } else {
+            level = -random01() * (mediaPlayer!.currentTime / mediaPlayer!.duration) * 100.0
+            playNext()
+        }
+        canvas.backgroundColor = Color(red: 0.9 - (level / 100) * colorWeight[0],
+                                       green: 0.9 - (level / 100) * colorWeight[1],
+                                       blue: 0.9 - (level / 100) * colorWeight[2],
+                                       alpha: 1.0)
     }
 
     func circleMode() {
@@ -182,7 +240,8 @@ class WorkSpace: CanvasController, MPMediaPickerControllerDelegate {
                 &propertySize)
             level = Double(levelMeter.mAveragePower)
         } else {
-            level = (mediaPlayer?.averagePower(0))!
+            level = -random01() * (mediaPlayer!.currentTime / mediaPlayer!.duration) * 100.0
+            playNext()
         }
         clearAll()
         circle = Circle(center: canvas.center, radius: 100.0+level)
@@ -208,7 +267,8 @@ class WorkSpace: CanvasController, MPMediaPickerControllerDelegate {
                 &propertySize)
             level = Double(levelMeter.mAveragePower)
         } else {
-            level = (mediaPlayer?.averagePower(1))!
+            level = -random01() * (mediaPlayer!.currentTime / mediaPlayer!.duration) * 100.0
+            playNext()
         }
         clearAll()
         square = Rectangle(frame: Rect(0, 0, (100+level)*1.5, (100+level)*1.5))
@@ -221,6 +281,57 @@ class WorkSpace: CanvasController, MPMediaPickerControllerDelegate {
                                        alpha: 1.0)
     }
     
+    func starMode() {
+        var level = 0.0
+        if mediaPlayer == nil {
+            var levelMeter = AudioQueueLevelMeterState()
+            var propertySize = UInt32(sizeof(AudioQueueLevelMeterState))
+            AudioQueueGetProperty(
+                self.queue,
+                kAudioQueueProperty_CurrentLevelMeterDB,
+                &levelMeter,
+                &propertySize)
+            level = Double(levelMeter.mAveragePower)
+        } else {
+            level = -random01() * (mediaPlayer!.currentTime / mediaPlayer!.duration) * 100.0
+            playNext()
+        }
+        clearAll()
+        star = Star(center: canvas.center, pointCount: 5, innerRadius: (100.0+level)/2, outerRadius: 100.0+level)
+        star!.fillColor = Color(red: colorWeight[0], green: colorWeight[1], blue: colorWeight[2], alpha: 1.0)
+        canvas.add(star)
+        canvas.backgroundColor = Color(red: 0.9 - (level / 100) * colorWeight[0],
+                                       green: 0.9 - (level / 100) * colorWeight[1],
+                                       blue: 0.9 - (level / 100) * colorWeight[2],
+                                       alpha: 1.0)
+        
+    }
+    
+    func regMode() {
+        var level = 0.0
+        if mediaPlayer == nil {
+            var levelMeter = AudioQueueLevelMeterState()
+            var propertySize = UInt32(sizeof(AudioQueueLevelMeterState))
+            AudioQueueGetProperty(
+                self.queue,
+                kAudioQueueProperty_CurrentLevelMeterDB,
+                &levelMeter,
+                &propertySize)
+            level = Double(levelMeter.mAveragePower)
+        } else {
+            level = -random01() * (mediaPlayer!.currentTime / mediaPlayer!.duration) * 100.0
+            playNext()
+        }
+        clearAll()
+        regularPol = RegularPolygon(center: canvas.center, radius: 100.0+level, sides: 6, phase: 0.0)
+        regularPol!.fillColor = Color(red: colorWeight[0], green: colorWeight[1], blue: colorWeight[2], alpha: 1.0)
+        canvas.add(regularPol)
+        canvas.backgroundColor = Color(red: 0.9 - (level / 100) * colorWeight[0],
+                                       green: 0.9 - (level / 100) * colorWeight[1],
+                                       blue: 0.9 - (level / 100) * colorWeight[2],
+                                       alpha: 1.0)
+    }
+    
     func clearAll() {
         if circle != nil {
             circle!.removeFromSuperview()
@@ -228,12 +339,20 @@ class WorkSpace: CanvasController, MPMediaPickerControllerDelegate {
         if square != nil {
             square!.removeFromSuperview()
         }
+        if star != nil {
+            star!.removeFromSuperview()
+        }
+        if regularPol != nil {
+            regularPol!.removeFromSuperview()
+        }
     }
     
     func changeMode() {
         clearAll()
         circle = nil
         square = nil
+        star = nil
+        regularPol = nil
     }
 }
 

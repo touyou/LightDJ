@@ -11,14 +11,24 @@
             <rect key="frame" x="0.0" y="0.0" width="480" height="480"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Launch" translatesAutoresizingMaskIntoConstraints="NO" id="WsN-xv-lin">
-                    <rect key="frame" x="136" y="114" width="209" height="252"/>
+                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="lightdjlogo" translatesAutoresizingMaskIntoConstraints="NO" id="WsN-xv-lin">
+                    <rect key="frame" x="0.0" y="0.0" width="480" height="480"/>
                 </imageView>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Copyright © 2016- touyou. All Rights Reserved." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HKC-Df-6Tg">
+                    <rect key="frame" x="115.5" y="406.5" width="249.5" height="13.5"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="11"/>
+                    <color key="textColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
             <constraints>
                 <constraint firstItem="WsN-xv-lin" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="8R6-yS-w21"/>
+                <constraint firstItem="HKC-Df-6Tg" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="Bkw-hx-iKS"/>
                 <constraint firstItem="WsN-xv-lin" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="Byj-iK-Noa"/>
+                <constraint firstItem="WsN-xv-lin" firstAttribute="width" secondItem="iN0-l3-epB" secondAttribute="width" id="UaS-23-68J"/>
+                <constraint firstAttribute="bottom" secondItem="HKC-Df-6Tg" secondAttribute="bottom" constant="60" id="i2V-nj-M4L"/>
+                <constraint firstItem="WsN-xv-lin" firstAttribute="height" secondItem="iN0-l3-epB" secondAttribute="height" id="tlH-5p-8l8"/>
             </constraints>
             <nil key="simulatedStatusBarMetrics"/>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
@@ -26,6 +36,6 @@
         </view>
     </objects>
     <resources>
-        <image name="Launch" width="209" height="252"/>
+        <image name="lightdjlogo" width="512" height="512"/>
     </resources>
 </document>

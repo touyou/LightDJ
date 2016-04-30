@@ -48,7 +48,7 @@ public class AudioPlayer: NSObject, AVAudioPlayerDelegate {
     /// ````
     public init?(_ name: String) {
         do {
-            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
+            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayAndRecord)
             try AVAudioSession.sharedInstance().setActive(true)
         } catch {
             print("Couldn't set up AVAudioSession")
@@ -73,7 +73,7 @@ public class AudioPlayer: NSObject, AVAudioPlayerDelegate {
     
     public init?(url: NSURL) {
         do {
-            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
+            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayAndRecord)
             try AVAudioSession.sharedInstance().setActive(true)
         } catch {
             print("Couldn't set up AVAudioSession")
@@ -270,5 +270,12 @@ public class AudioPlayer: NSObject, AVAudioPlayerDelegate {
     /// - returns: A floating-point representation, in decibels, of a given audio channel’s current peak power.
     public func peakPower(channel: Int) -> Double {
         return Double(player.peakPowerForChannel(channel))
+    }
+    
+    /// Returns the number of channel
+    public var numberOfChannels : Int {
+        get {
+            return player.numberOfChannels
+        }
     }
 }
