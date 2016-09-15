@@ -11,7 +11,7 @@ import AudioToolbox
 import MediaPlayer
 
 private func AudioQueueInputCallback(
-    inUserData: UnsafeMutablePointer<Void>,
+    _ inUserData: UnsafeMutableRawPointer,
     inAQ: AudioQueueRef,
     inBuffer: AudioQueueBufferRef,
     inStartTime: UnsafePointer<AudioTimeStamp>,
@@ -25,7 +25,7 @@ class WorkSpace: CanvasController, MPMediaPickerControllerDelegate {
     var modeCnt = 5
     
     var queue: AudioQueueRef!
-    var timer: NSTimer!
+    var timer: Foundation.Timer!
     var colorWeight: [Double] = [0.0, 0.0, 0.0]
     var circle: Circle?
     var square: Rectangle?
@@ -88,9 +88,9 @@ class WorkSpace: CanvasController, MPMediaPickerControllerDelegate {
         let picker = MPMediaPickerController()
         picker.delegate = self
         picker.allowsPickingMultipleItems = true
-        presentViewController(picker, animated: true, completion: nil)
+        present(picker, animated: true, completion: nil)
         // ピンチで曲変更
-        canvas.addPinchGestureRecognizer {_,_,_ in
+        canvas.addPinchGestureRecognizer {_,_,_,_,_ in
             if self.mediaPlayer != nil {
                 self.mediaPlayer?.pause()
             }
@@ -99,14 +99,14 @@ class WorkSpace: CanvasController, MPMediaPickerControllerDelegate {
             let picker = MPMediaPickerController()
             picker.delegate = self
             picker.allowsPickingMultipleItems = true
-            self.presentViewController(picker, animated: true, completion: nil)
+            self.present(picker, animated: true, completion: nil)
         }
     }
     
     // MARK: - Music
-    func mediaPicker(mediaPicker: MPMediaPickerController, didPickMediaItems mediaItemCollection: MPMediaItemCollection) {
+    func mediaPicker(_ mediaPicker: MPMediaPickerController, didPickMediaItems mediaItemCollection: MPMediaItemCollection) {
         defer {
-            dismissViewControllerAnimated(true, completion: nil)
+            dismiss(animated: true, completion: nil)
         }
         mediaItems = mediaItemCollection.items
         if mediaItems.isEmpty {
@@ -116,13 +116,13 @@ class WorkSpace: CanvasController, MPMediaPickerControllerDelegate {
         nowPlaying = 0
         playMedia(item)
     }
-    func mediaPickerDidCancel(mediaPicker: MPMediaPickerController) {
+    func mediaPickerDidCancel(_ mediaPicker: MPMediaPickerController) {
         mediaPlayer = nil
-        dismissViewControllerAnimated(true, completion: nil)
+        dismiss(animated: true, completion: nil)
     }
-    func playMedia(mediaItem: MPMediaItem) {
+    func playMedia(_ mediaItem: MPMediaItem) {
         if let url = mediaItem.assetURL {
-            mediaPlayer = AudioPlayer(url: url)
+            mediaPlayer = AudioPlayer(url.absoluteString)
             mediaPlayer?.loops = false
             mediaPlayer?.play()
         }
@@ -144,14 +144,14 @@ class WorkSpace: CanvasController, MPMediaPickerControllerDelegate {
         // マイクの設定
         var dataFormat = AudioStreamBasicDescription(mSampleRate: 44100.0, mFormatID: kAudioFormatLinearPCM, mFormatFlags: AudioFormatFlags(kLinearPCMFormatFlagIsBigEndian | kLinearPCMFormatFlagIsSignedInteger | kLinearPCMFormatFlagIsPacked), mBytesPerPacket: 2, mFramesPerPacket: 1, mBytesPerFrame: 2, mChannelsPerFrame: 1, mBitsPerChannel: 16, mReserved: 0)
         // Observe input level
-        var audioQueue: AudioQueueRef = nil
+        var audioQueue: AudioQueueRef? = nil
         var error = noErr
         error = AudioQueueNewInput(
             &dataFormat,
-            AudioQueueInputCallback,
-            UnsafeMutablePointer(unsafeAddressOf(self)),
-            .None,
-            .None,
+            AudioQueueInputCallback as! AudioQueueInputCallback,
+            Unmanaged.passUnretained(self).toOpaque(),
+            .none,
+            .none,
             0,
             &audioQueue)
         if error == noErr {
@@ -159,10 +159,10 @@ class WorkSpace: CanvasController, MPMediaPickerControllerDelegate {
         }
         AudioQueueStart(self.queue, nil)
         var enabledLevelMeter: UInt32 = 1
-        AudioQueueSetProperty(self.queue, kAudioQueueProperty_EnableLevelMetering, &enabledLevelMeter, UInt32(sizeof(UInt32)))
+        AudioQueueSetProperty(self.queue, kAudioQueueProperty_EnableLevelMetering, &enabledLevelMeter, UInt32(MemoryLayout<UInt32>.size))
     }
     
-    func startMode(mode: Int) {
+    func startMode(_ mode: Int) {
         // 色の設定
         for i in 0..<3 {
             colorWeight[i] = random01()
@@ -173,31 +173,31 @@ class WorkSpace: CanvasController, MPMediaPickerControllerDelegate {
         // modeごとにselectorを変更する
         switch mode {
         case 1:
-            self.timer = NSTimer.scheduledTimerWithTimeInterval(0.1,
+            self.timer = Foundation.Timer.scheduledTimer(timeInterval: 0.1,
                                                                 target: self,
                                                                 selector: #selector(WorkSpace.circleMode),
                                                                 userInfo: nil,
                                                                 repeats: true)
         case 2:
-            self.timer = NSTimer.scheduledTimerWithTimeInterval(0.1,
+            self.timer = Foundation.Timer.scheduledTimer(timeInterval: 0.1,
                                                                 target: self,
                                                                 selector: #selector(WorkSpace.squareMode),
                                                                 userInfo: nil,
                                                                 repeats: true)
         case 3:
-            self.timer = NSTimer.scheduledTimerWithTimeInterval(0.1,
+            self.timer = Foundation.Timer.scheduledTimer(timeInterval: 0.1,
                                                                 target: self,
                                                                 selector: #selector(WorkSpace.starMode),
                                                                 userInfo: nil,
                                                                 repeats: true)
         case 4:
-            self.timer = NSTimer.scheduledTimerWithTimeInterval(0.1,
+            self.timer = Foundation.Timer.scheduledTimer(timeInterval: 0.1,
                                                                 target: self,
                                                                 selector: #selector(WorkSpace.regMode),
                                                                 userInfo: nil,
                                                                 repeats: true)
         case 0:
-            self.timer = NSTimer.scheduledTimerWithTimeInterval(0.1,
+            self.timer = Foundation.Timer.scheduledTimer(timeInterval: 0.1,
                                                                 target: self,
                                                                 selector: #selector(WorkSpace.noObject),
                                                                 userInfo: nil,
@@ -211,7 +211,7 @@ class WorkSpace: CanvasController, MPMediaPickerControllerDelegate {
         var level = 0.0
         if mediaPlayer == nil {
             var levelMeter = AudioQueueLevelMeterState()
-            var propertySize = UInt32(sizeof(AudioQueueLevelMeterState))
+            var propertySize = UInt32(MemoryLayout<AudioQueueLevelMeterState>.size)
             AudioQueueGetProperty(
                 self.queue,
                 kAudioQueueProperty_CurrentLevelMeterDB,
@@ -232,7 +232,7 @@ class WorkSpace: CanvasController, MPMediaPickerControllerDelegate {
         var level = 0.0
         if mediaPlayer == nil {
             var levelMeter = AudioQueueLevelMeterState()
-            var propertySize = UInt32(sizeof(AudioQueueLevelMeterState))
+            var propertySize = UInt32(MemoryLayout<AudioQueueLevelMeterState>.size)
             AudioQueueGetProperty(
                 self.queue,
                 kAudioQueueProperty_CurrentLevelMeterDB,
@@ -259,7 +259,7 @@ class WorkSpace: CanvasController, MPMediaPickerControllerDelegate {
         var level = 0.0
         if mediaPlayer == nil {
             var levelMeter = AudioQueueLevelMeterState()
-            var propertySize = UInt32(sizeof(AudioQueueLevelMeterState))
+            var propertySize = UInt32(MemoryLayout<AudioQueueLevelMeterState>.size)
             AudioQueueGetProperty(
                 self.queue,
                 kAudioQueueProperty_CurrentLevelMeterDB,
@@ -285,7 +285,7 @@ class WorkSpace: CanvasController, MPMediaPickerControllerDelegate {
         var level = 0.0
         if mediaPlayer == nil {
             var levelMeter = AudioQueueLevelMeterState()
-            var propertySize = UInt32(sizeof(AudioQueueLevelMeterState))
+            var propertySize = UInt32(MemoryLayout<AudioQueueLevelMeterState>.size)
             AudioQueueGetProperty(
                 self.queue,
                 kAudioQueueProperty_CurrentLevelMeterDB,
@@ -311,7 +311,7 @@ class WorkSpace: CanvasController, MPMediaPickerControllerDelegate {
         var level = 0.0
         if mediaPlayer == nil {
             var levelMeter = AudioQueueLevelMeterState()
-            var propertySize = UInt32(sizeof(AudioQueueLevelMeterState))
+            var propertySize = UInt32(MemoryLayout<AudioQueueLevelMeterState>.size)
             AudioQueueGetProperty(
                 self.queue,
                 kAudioQueueProperty_CurrentLevelMeterDB,
