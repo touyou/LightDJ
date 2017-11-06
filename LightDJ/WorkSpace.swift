@@ -9,6 +9,7 @@
 import UIKit
 import AudioToolbox
 import MediaPlayer
+import C4
 
 private func AudioQueueInputCallback(
     _ inUserData: UnsafeMutableRawPointer,
@@ -43,9 +44,9 @@ class WorkSpace: CanvasController, MPMediaPickerControllerDelegate {
             // Finish observation
             self.timer.invalidate()
             self.timer = nil
-            self.startMode(random(min: 0, max: self.modeCnt))
+            self.startMode(random(in: 0..<self.modeCnt))
         })
-        startMode(random(min: 0, max: modeCnt))
+        startMode(random(in: 0..<modeCnt))
         
         // ドット柄
         let maxDistance = distance(Point(), rhs: canvas.center)
@@ -74,13 +75,13 @@ class WorkSpace: CanvasController, MPMediaPickerControllerDelegate {
             let a = ViewAnimation(duration: 1.0) {
                 circle.opacity = 0.0
                 circle.transform.scale(0.01, 0.01)
-                circle.center = Point(center.x + (random01()-0.5) * self.canvas.width,
-                                    center.y + (random01()-0.5) * self.canvas.height)
+                circle.center = Point(center.x + (random(in: 0..<1)-0.5) * self.canvas.width,
+                                    center.y + (random(in: 0..<1)-0.5) * self.canvas.height)
             }
             a.addCompletionObserver {
                 circle.removeFromSuperview()
             }
-            a.curve = .Linear
+            a.curve = .linear
             a.animate()
         }
 
@@ -165,7 +166,7 @@ class WorkSpace: CanvasController, MPMediaPickerControllerDelegate {
     func startMode(_ mode: Int) {
         // 色の設定
         for i in 0..<3 {
-            colorWeight[i] = random01()
+            colorWeight[i] = random(in: 0..<1)
         }
         
         changeMode()
@@ -207,7 +208,7 @@ class WorkSpace: CanvasController, MPMediaPickerControllerDelegate {
         timer.fire()
     }
     
-    func noObject() {
+    @objc func noObject() {
         var level = 0.0
         if mediaPlayer == nil {
             var levelMeter = AudioQueueLevelMeterState()
@@ -219,7 +220,7 @@ class WorkSpace: CanvasController, MPMediaPickerControllerDelegate {
                 &propertySize)
             level = Double(levelMeter.mAveragePower)
         } else {
-            level = -random01() * (mediaPlayer!.currentTime / mediaPlayer!.duration) * 100.0
+            level = -random(in: 0..<1) * (mediaPlayer!.currentTime / mediaPlayer!.duration) * 100.0
             playNext()
         }
         canvas.backgroundColor = Color(red: 0.9 - (level / 100) * colorWeight[0],
@@ -228,7 +229,7 @@ class WorkSpace: CanvasController, MPMediaPickerControllerDelegate {
                                        alpha: 1.0)
     }
 
-    func circleMode() {
+    @objc func circleMode() {
         var level = 0.0
         if mediaPlayer == nil {
             var levelMeter = AudioQueueLevelMeterState()
@@ -240,7 +241,7 @@ class WorkSpace: CanvasController, MPMediaPickerControllerDelegate {
                 &propertySize)
             level = Double(levelMeter.mAveragePower)
         } else {
-            level = -random01() * (mediaPlayer!.currentTime / mediaPlayer!.duration) * 100.0
+            level = -random(in: 0..<1) * (mediaPlayer!.currentTime / mediaPlayer!.duration) * 100.0
             playNext()
         }
         clearAll()
@@ -254,7 +255,7 @@ class WorkSpace: CanvasController, MPMediaPickerControllerDelegate {
 
     }
     
-    func squareMode() {
+    @objc func squareMode() {
         // Get level
         var level = 0.0
         if mediaPlayer == nil {
@@ -267,7 +268,7 @@ class WorkSpace: CanvasController, MPMediaPickerControllerDelegate {
                 &propertySize)
             level = Double(levelMeter.mAveragePower)
         } else {
-            level = -random01() * (mediaPlayer!.currentTime / mediaPlayer!.duration) * 100.0
+            level = -random(in: 0..<1) * (mediaPlayer!.currentTime / mediaPlayer!.duration) * 100.0
             playNext()
         }
         clearAll()
@@ -281,7 +282,7 @@ class WorkSpace: CanvasController, MPMediaPickerControllerDelegate {
                                        alpha: 1.0)
     }
     
-    func starMode() {
+    @objc func starMode() {
         var level = 0.0
         if mediaPlayer == nil {
             var levelMeter = AudioQueueLevelMeterState()
@@ -293,7 +294,7 @@ class WorkSpace: CanvasController, MPMediaPickerControllerDelegate {
                 &propertySize)
             level = Double(levelMeter.mAveragePower)
         } else {
-            level = -random01() * (mediaPlayer!.currentTime / mediaPlayer!.duration) * 100.0
+            level = -random(in: 0..<1) * (mediaPlayer!.currentTime / mediaPlayer!.duration) * 100.0
             playNext()
         }
         clearAll()
@@ -307,7 +308,7 @@ class WorkSpace: CanvasController, MPMediaPickerControllerDelegate {
         
     }
     
-    func regMode() {
+    @objc func regMode() {
         var level = 0.0
         if mediaPlayer == nil {
             var levelMeter = AudioQueueLevelMeterState()
@@ -319,7 +320,7 @@ class WorkSpace: CanvasController, MPMediaPickerControllerDelegate {
                 &propertySize)
             level = Double(levelMeter.mAveragePower)
         } else {
-            level = -random01() * (mediaPlayer!.currentTime / mediaPlayer!.duration) * 100.0
+            level = -random(in: 0..<1) * (mediaPlayer!.currentTime / mediaPlayer!.duration) * 100.0
             playNext()
         }
         clearAll()
