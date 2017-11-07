@@ -12,12 +12,13 @@ import MediaPlayer
 import C4
 
 private func AudioQueueInputCallback(
-    _ inUserData: UnsafeMutableRawPointer,
+    _ inUserData: UnsafeMutableRawPointer?,
     inAQ: AudioQueueRef,
     inBuffer: AudioQueueBufferRef,
     inStartTime: UnsafePointer<AudioTimeStamp>,
     inNumberPacketDescriptions: UInt32,
-    inPacketDescs: UnsafePointer<AudioStreamPacketDescription>) {
+    inPacketDescs: UnsafePointer<AudioStreamPacketDescription>?)
+{
     // Do nothing, because not recoding.
 }
 
@@ -149,7 +150,7 @@ class WorkSpace: CanvasController, MPMediaPickerControllerDelegate {
         var error = noErr
         error = AudioQueueNewInput(
             &dataFormat,
-            AudioQueueInputCallback as! AudioQueueInputCallback,
+            AudioQueueInputCallback,
             Unmanaged.passUnretained(self).toOpaque(),
             .none,
             .none,
